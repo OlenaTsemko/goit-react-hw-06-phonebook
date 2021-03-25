@@ -1,43 +1,37 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-import shortid from 'shortid';
 import PhoneInput from 'react-phone-number-input';
+
+import * as contactsActions from 'redux/contacts/contacts-actions';
 
 import styles from './ContactForm.module.scss';
 import 'react-phone-number-input/style.css';
 
 const ContactForm = ({ contacts, onSubmit }) => {
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [contactName, setContactName] = useState('');
+  const [contactNumber, setContactNumber] = useState('');
 
   const handleChange = event => {
     const { name, value } = event.currentTarget;
     if (name === 'name') {
-      setName(value);
+      setContactName(value);
     }
-    // if (name === 'number') {
-    //   setNumber(value);
-    // }
   };
 
   const handleFormSubmit = event => {
     event.preventDefault();
 
-    if (!name || !number) {
+    if (!contactName || !contactNumber) {
       alert('Please enter the correct name and number');
       return;
     }
 
-    const contact = {
-      id: shortid.generate(),
-      name,
-      number,
-    };
+    const checkSameName = contacts.find(({ name }) => name === contactName);
 
-    const checkSameName = contacts.find(({ name }) => name === contact.name);
     const checkSameNumber = contacts.find(
-      ({ number }) => number === contact.number,
+      ({ number }) => number === contactNumber,
     );
 
     if (checkSameNumber) {
@@ -47,17 +41,17 @@ const ContactForm = ({ contacts, onSubmit }) => {
     }
 
     if (checkSameName) {
-      alert(`${name} is already in contacts`);
+      alert(`${contactName} is already in contacts`);
       return;
     }
 
-    onSubmit(contact);
+    onSubmit(contactName, contactNumber);
     reset();
   };
 
   const reset = () => {
-    setName('');
-    setNumber('');
+    setContactName('');
+    setContactNumber('');
   };
 
   return (
@@ -69,7 +63,7 @@ const ContactForm = ({ contacts, onSubmit }) => {
           type="text"
           placeholder="Enter contact's name"
           name="name"
-          value={name}
+          value={contactName}
           onChange={handleChange}
           autoComplete="off"
         />
@@ -77,9 +71,8 @@ const ContactForm = ({ contacts, onSubmit }) => {
       <label className={styles.formLabel}>
         <span className={styles.formText}>Number</span>
         <PhoneInput
-          // name="number"
-          value={number}
-          onChange={setNumber}
+          value={contactNumber}
+          onChange={setContactNumber}
           defaultCountry="UA"
           international
           autoComplete="off"
@@ -97,4 +90,13 @@ ContactForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 
-export default ContactForm;
+const mapStateToProps = state => ({
+  contacts: state.contacts.items,
+});
+
+const mapDispatchToProps = dispatch => ({
+  onSubmit: (name, number) =>
+    dispatch(contactsActions.addNewContact(name, number)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);

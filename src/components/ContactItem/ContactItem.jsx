@@ -1,5 +1,8 @@
 import PropTypes from 'prop-types';
 
+import { connect } from 'react-redux';
+import * as contactsActions from 'redux/contacts/contacts-actions';
+
 import styles from './ContactItem.module.scss';
 
 const ContactItem = ({ contact, onDeleteContact }) => {
@@ -33,4 +36,9 @@ ContactItem.propTypes = {
   onDeleteContact: PropTypes.func.isRequired,
 };
 
-export default ContactItem;
+const mapDispatchToProps = dispatch => ({
+  onDeleteContact: contactId =>
+    dispatch(contactsActions.deleteContact(contactId)),
+});
+
+export default connect(null, mapDispatchToProps)(ContactItem);
