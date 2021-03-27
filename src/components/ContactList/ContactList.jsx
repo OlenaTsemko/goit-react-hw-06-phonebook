@@ -1,11 +1,27 @@
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+// с использованием хуков
+import { useSelector } from 'react-redux';
 
+import { getContactsToShow } from 'redux/contacts/contacts-selectors';
 import ContactItem from '../ContactItem';
 import styles from './ContactList.module.scss';
 
-const ContactList = ({ contacts }) =>
-  contacts.length === 0 ? (
+const ContactList = () => {
+  // перенесла в контактс-селекторс
+  // const getContactsToShow = (allContacts, filter) => {
+  //   const normalizedFilter = filter.toLowerCase();
+
+  //   return allContacts.filter(({ name }) =>
+  //     name.toLowerCase().includes(normalizedFilter),
+  //   );
+  // };
+
+  // const contacts = useSelector(({ contacts: { items, filter } }) =>
+  //   getContactsToShow(items, filter),
+  // );
+
+  const contacts = useSelector(getContactsToShow);
+
+  return contacts.length === 0 ? (
     <p className={styles.notification}>Contact book is empty</p>
   ) : (
     <ul className={styles.ContactList}>
@@ -16,32 +32,55 @@ const ContactList = ({ contacts }) =>
       })}
     </ul>
   );
-
-ContactList.defaultProps = {
-  contacts: [],
 };
 
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    }),
-  ),
-};
+export default ContactList;
 
-// selector
-const getContactsToShow = (allContacts, filter) => {
-  const normalizedFilter = filter.toLowerCase();
+// =========================================================================
+// import PropTypes from 'prop-types';
+// import { connect } from 'react-redux';
 
-  return allContacts.filter(({ name }) =>
-    name.toLowerCase().includes(normalizedFilter),
-  );
-};
+// import ContactItem from '../ContactItem';
+// import styles from './ContactList.module.scss';
 
-const mapStateToProps = ({ contacts: { items, filter } }) => ({
-  contacts: getContactsToShow(items, filter),
-});
+// const ContactList = ({ contacts }) =>
+//   contacts.length === 0 ? (
+//     <p className={styles.notification}>Contact book is empty</p>
+//   ) : (
+//     <ul className={styles.ContactList}>
+//       {contacts.map(contact => {
+//         const { id } = contact;
 
-export default connect(mapStateToProps)(ContactList);
+//         return <ContactItem key={id} contact={contact} />;
+//       })}
+//     </ul>
+//   );
+
+// ContactList.defaultProps = {
+//   contacts: [],
+// };
+
+// ContactList.propTypes = {
+//   contacts: PropTypes.arrayOf(
+//     PropTypes.shape({
+//       id: PropTypes.string.isRequired,
+//       name: PropTypes.string.isRequired,
+//       number: PropTypes.string.isRequired,
+//     }),
+//   ),
+// };
+
+// // selector
+// const getContactsToShow = (allContacts, filter) => {
+//   const normalizedFilter = filter.toLowerCase();
+
+//   return allContacts.filter(({ name }) =>
+//     name.toLowerCase().includes(normalizedFilter),
+//   );
+// };
+
+// const mapStateToProps = ({ contacts: { items, filter } }) => ({
+//   contacts: getContactsToShow(items, filter),
+// });
+
+// export default connect(mapStateToProps)(ContactList);

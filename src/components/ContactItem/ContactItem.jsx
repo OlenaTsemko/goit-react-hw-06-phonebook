@@ -1,12 +1,16 @@
+// с использованием хуков
 import PropTypes from 'prop-types';
 
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import * as contactsActions from 'redux/contacts/contacts-actions';
 
 import styles from './ContactItem.module.scss';
 
-const ContactItem = ({ contact, onDeleteContact }) => {
+const ContactItem = ({ contact }) => {
   const { id, name, number } = contact;
+
+  const dispatch = useDispatch();
+  const onDeleteContact = () => dispatch(contactsActions.deleteContact(id));
 
   return (
     <li className={styles.ContactItem}>
@@ -20,7 +24,7 @@ const ContactItem = ({ contact, onDeleteContact }) => {
           {number}
         </a>
       </span>
-      <button className={styles.contactBtn} onClick={() => onDeleteContact(id)}>
+      <button className={styles.contactBtn} onClick={onDeleteContact}>
         Delete
       </button>
     </li>
@@ -32,13 +36,53 @@ ContactItem.propTypes = {
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     number: PropTypes.string.isRequired,
-  }),
-  onDeleteContact: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
-const mapDispatchToProps = dispatch => ({
-  onDeleteContact: contactId =>
-    dispatch(contactsActions.deleteContact(contactId)),
-});
+export default ContactItem;
 
-export default connect(null, mapDispatchToProps)(ContactItem);
+// ===============================================================================
+// import PropTypes from 'prop-types';
+
+// import { connect } from 'react-redux';
+// import * as contactsActions from 'redux/contacts/contacts-actions';
+
+// import styles from './ContactItem.module.scss';
+
+// const ContactItem = ({ contact, onDeleteContact }) => {
+//   const { id, name, number } = contact;
+
+//   return (
+//     <li className={styles.ContactItem}>
+//       <span>
+//         {name}:
+//         <a
+//           className={styles.phoneNumber}
+//           href={'tel:' + number}
+//           aria-label="Call"
+//         >
+//           {number}
+//         </a>
+//       </span>
+//       <button className={styles.contactBtn} onClick={() => onDeleteContact(id)}>
+//         Delete
+//       </button>
+//     </li>
+//   );
+// };
+
+// ContactItem.propTypes = {
+//   contact: PropTypes.shape({
+//     id: PropTypes.string.isRequired,
+//     name: PropTypes.string.isRequired,
+//     number: PropTypes.string.isRequired,
+//   }),
+//   onDeleteContact: PropTypes.func.isRequired,
+// };
+
+// const mapDispatchToProps = dispatch => ({
+//   onDeleteContact: contactId =>
+//     dispatch(contactsActions.deleteContact(contactId)),
+// });
+
+// export default connect(null, mapDispatchToProps)(ContactItem);
